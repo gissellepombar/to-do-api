@@ -33,8 +33,8 @@ export async function deleteTask(req, res) {
 
 
 export async function updateTask(req, res) {
-    const { done } = req.body;
     const { taskId } = req.params;
+    const { done } = req.body;
     const db = await getFirestoreInstance();
     db.collection('tasks').doc(taskId).update({ done })
         .then(getAllTasks(req, res))
