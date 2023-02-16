@@ -4,7 +4,7 @@ import { FieldValue } from "firebase-admin/firestore";
 export async function getAllTasks(req, res) {
     const db = await getFirestoreInstance();
     //const collection = await db.getCollections(taskss)
-    db.collection('tasks').sortBy('createdAt', 'desc').get()
+    db.collection('tasks').orderBy('createdAt', 'desc').get()
     .then(collection => {
         const tasks = collection.docs.map(doc => ({ taskId: doc.id, ...doc.data() }))
         res.send(tasks)
@@ -21,6 +21,16 @@ export async function addTask(req, res) {
         .then(getAllTasks(req, res))
         .catch(err => res.status(500).send({ error: err.message }))
 }
+
+export async function deleteTask(req, res) {
+    const { taskId } = req.params;
+    const db = await getFirestoreInstance();
+    db.collection('tasks')
+        .doc(taskId)
+        .delete()
+        .then( () => getAllTasks(req, res))
+        .catch(err => res.status(500).send({error:err.message}))}
+
 
 export async function updateTask(req, res) {
     const { done } = req.body;
